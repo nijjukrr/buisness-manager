@@ -65,6 +65,7 @@
   .search-box::placeholder { color: var(--text3); }
   .search-box:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
   .btn { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; padding: 9px 18px; border-radius: var(--radius-sm); border: none; cursor: pointer; transition: all 0.15s; letter-spacing: 0.02em; }
+  .btn:focus-visible, .tab-btn:focus-visible, .add-line-btn:focus-visible, .nav-item:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-glow); }
   .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; box-shadow: 0 4px 14px var(--accent-glow); }
   .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,185,129,0.4); }
   .btn-ghost { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
@@ -654,7 +655,7 @@ function renderOrderLines() {
       <div style="font-size:13px;color:var(--text2);font-family:'Syne',sans-serif;font-weight:600;">
         ${line.itemId && itemById(line.itemId) ? cur(itemById(line.itemId).price * line.qty) : '—'}
       </div>
-      <button class="btn btn-danger btn-sm" onclick="removeOrderLine(${idx})" ${orderLines.length===1?'disabled':''}>✕</button>
+      <button class="btn btn-danger btn-sm" aria-label="Remove item line" title="Remove item line" onclick="removeOrderLine(${idx})" ${orderLines.length===1?'disabled':''}>✕</button>
     </div>`;
   }).join('');
   document.getElementById('order-item-count').textContent = orderLines.filter(l => l.itemId).length + ' items';
@@ -784,8 +785,8 @@ function renderOrdersList() {
       <td style="color:var(--text3);font-size:12px;">${o.dateRaw}</td>
       <td style="display:flex;gap:6px;">
         <button class="btn btn-ghost btn-sm" onclick="showBill(orders.find(x=>x.id===${o.id}))">Bill</button>
-        <button class="btn btn-green btn-sm" onclick="markDelivered(${o.id})" ${o.status==='Delivered'?'disabled':''}>✓</button>
-        <button class="btn btn-danger btn-sm" onclick="returnOrder(${o.id})" ${o.status==='Returned'?'disabled':''}>↺</button>
+        <button class="btn btn-green btn-sm" aria-label="Mark order as delivered" title="Mark order as delivered" onclick="markDelivered(${o.id})" ${o.status==='Delivered'?'disabled':''}>✓</button>
+        <button class="btn btn-danger btn-sm" aria-label="Return order" title="Return order" onclick="returnOrder(${o.id})" ${o.status==='Returned'?'disabled':''}>↺</button>
       </td>
     </tr>`).join('')}
   </tbody></table>`;
