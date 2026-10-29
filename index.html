@@ -289,7 +289,7 @@
       <div class="topbar">
         <div><div class="page-title">Inventory</div><div class="page-sub">Manage your stock</div></div>
         <div class="topbar-right">
-          <input class="search-box" id="inv-search" placeholder="Search items..." oninput="renderInventoryTable()">
+          <input class="search-box" id="inv-search" aria-label="Search items" placeholder="Search items..." oninput="renderInventoryTable()">
           <button class="btn btn-primary" onclick="openModal('add-item-modal')">+ Add Item</button>
         </div>
       </div>
@@ -339,7 +339,7 @@
     <div id="page-orders" class="page">
       <div class="topbar">
         <div><div class="page-title">Orders</div><div class="page-sub">All customer orders</div></div>
-        <div class="topbar-right"><input class="search-box" id="orders-search" placeholder="Search by customer..." oninput="renderOrdersList()"></div>
+        <div class="topbar-right"><input class="search-box" id="orders-search" aria-label="Search orders by customer" placeholder="Search by customer..." oninput="renderOrdersList()"></div>
       </div>
       <div class="stats-grid" id="order-stats"></div>
       <div class="card">
@@ -654,7 +654,7 @@ function renderOrderLines() {
       <div style="font-size:13px;color:var(--text2);font-family:'Syne',sans-serif;font-weight:600;">
         ${line.itemId && itemById(line.itemId) ? cur(itemById(line.itemId).price * line.qty) : '—'}
       </div>
-      <button class="btn btn-danger btn-sm" onclick="removeOrderLine(${idx})" ${orderLines.length===1?'disabled':''}>✕</button>
+      <button class="btn btn-danger btn-sm" aria-label="Remove item" title="Remove item" onclick="removeOrderLine(${idx})" ${orderLines.length===1?'disabled':''}>✕</button>
     </div>`;
   }).join('');
   document.getElementById('order-item-count').textContent = orderLines.filter(l => l.itemId).length + ' items';
@@ -784,8 +784,8 @@ function renderOrdersList() {
       <td style="color:var(--text3);font-size:12px;">${o.dateRaw}</td>
       <td style="display:flex;gap:6px;">
         <button class="btn btn-ghost btn-sm" onclick="showBill(orders.find(x=>x.id===${o.id}))">Bill</button>
-        <button class="btn btn-green btn-sm" onclick="markDelivered(${o.id})" ${o.status==='Delivered'?'disabled':''}>✓</button>
-        <button class="btn btn-danger btn-sm" onclick="returnOrder(${o.id})" ${o.status==='Returned'?'disabled':''}>↺</button>
+        <button class="btn btn-green btn-sm" aria-label="Mark order as delivered" title="Mark as delivered" onclick="markDelivered(${o.id})" ${o.status==='Delivered'?'disabled':''}>✓</button>
+        <button class="btn btn-danger btn-sm" aria-label="Return order" title="Return order" onclick="returnOrder(${o.id})" ${o.status==='Returned'?'disabled':''}>↺</button>
       </td>
     </tr>`).join('')}
   </tbody></table>`;
