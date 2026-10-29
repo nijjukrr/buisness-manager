@@ -2,7 +2,7 @@
   "name": "Annai Store",
   "short_name": "AnnaiStore",
   "description": "Store Business Manager",
-  "start_url": "./stockflow-app.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#10b981",
