@@ -1,6 +1,6 @@
-const CACHE_NAME = 'annai-store-v1';
+const CACHE_NAME = 'annai-store-v2';
 const ASSETS = [
-  './stockflow-app.html',
+  './index.html',
   './manifest.json',
   './icon.svg'
 ];
