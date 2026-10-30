@@ -45,10 +45,11 @@
   .logo-sub { font-size: 11px; color: var(--text3); font-weight: 300; margin-top: 2px; letter-spacing: 0.08em; }
   .nav { padding: 16px 12px; flex: 1; }
   .nav-section { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--text3); padding: 0 8px; margin: 16px 0 6px; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 400; color: var(--text2); cursor: pointer; transition: all 0.15s; margin-bottom: 2px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 400; color: var(--text2); cursor: pointer; transition: all 0.15s; margin-bottom: 2px; width: 100%; border: 1px solid transparent; background: transparent; font-family: inherit; text-align: left; }
   .nav-item:hover { background: var(--surface2); color: var(--text); }
   .nav-item.active { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.05)); color: var(--accent2); border: 1px solid rgba(16,185,129,0.3); font-weight: 600; box-shadow: 0 2px 8px var(--accent-glow); }
   .nav-item .icon { width: 18px; text-align: center; font-size: 15px; }
+  .nav-item:focus-visible, .btn:focus-visible, .tab-btn:focus-visible, .add-line-btn:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
   .nav-badge { margin-left: auto; background: var(--accent); color: #fff; font-size: 10px; padding: 1px 7px; border-radius: 20px; font-family: 'Syne', sans-serif; font-weight: 600; }
   .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
   .biz-card { background: var(--surface2); border-radius: var(--radius-sm); padding: 12px; border: 1px solid var(--border); }
@@ -241,15 +242,15 @@
     </div>
     <nav class="nav">
       <div class="nav-section">Main</div>
-      <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="icon">◈</span><span>Dashboard</span></div>
-      <div class="nav-item" onclick="showPage('inventory',this)"><span class="icon">◫</span><span>Inventory</span></div>
-      <div class="nav-item" onclick="showPage('order',this)"><span class="icon">✦</span><span>New Order</span></div>
+      <button class="nav-item active" onclick="showPage('dashboard',this)"><span class="icon">◈</span><span>Dashboard</span></button>
+      <button class="nav-item" onclick="showPage('inventory',this)"><span class="icon">◫</span><span>Inventory</span></button>
+      <button class="nav-item" onclick="showPage('order',this)"><span class="icon">✦</span><span>New Order</span></button>
       <div class="nav-section">Records</div>
-      <div class="nav-item" onclick="showPage('orders',this)"><span class="icon">◳</span><span>Orders</span><span class="nav-badge" id="order-count-badge">0</span></div>
-      <div class="nav-item" onclick="showPage('customers',this)"><span class="icon">◎</span><span>Customers</span></div>
+      <button class="nav-item" onclick="showPage('orders',this)"><span class="icon">◳</span><span>Orders</span><span class="nav-badge" id="order-count-badge">0</span></button>
+      <button class="nav-item" onclick="showPage('customers',this)"><span class="icon">◎</span><span>Customers</span></button>
       <div class="nav-section">Tools</div>
-      <div class="nav-item" onclick="showPage('analytics',this)"><span class="icon">◬</span><span>Analytics</span></div>
-      <div class="nav-item" onclick="showPage('settings',this)"><span class="icon">⊙</span><span>Settings</span></div>
+      <button class="nav-item" onclick="showPage('analytics',this)"><span class="icon">◬</span><span>Analytics</span></button>
+      <button class="nav-item" onclick="showPage('settings',this)"><span class="icon">⊙</span><span>Settings</span></button>
     </nav>
     <div class="sidebar-footer">
       <div class="biz-card">
