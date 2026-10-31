@@ -65,6 +65,7 @@
   .search-box::placeholder { color: var(--text3); }
   .search-box:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
   .btn { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; padding: 9px 18px; border-radius: var(--radius-sm); border: none; cursor: pointer; transition: all 0.15s; letter-spacing: 0.02em; }
+  .btn:focus-visible, .tab-btn:focus-visible, .add-line-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-glow); }
   .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; box-shadow: 0 4px 14px var(--accent-glow); }
   .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,185,129,0.4); }
   .btn-ghost { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
@@ -391,9 +392,9 @@
 </div>
 
 <!-- ADD ITEM MODAL -->
-<div id="add-item-modal" class="modal-overlay">
+<div id="add-item-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="add-item-modal-title">
   <div class="modal">
-    <div class="modal-title">Add new item</div>
+    <div class="modal-title" id="add-item-modal-title">Add new item</div>
     <div class="form-grid">
       <div class="form-group full"><label class="form-label">Item name *</label><input class="form-input" id="m-name" placeholder="e.g. Chair, Table, Tent"></div>
       <div class="form-group"><label class="form-label">Category</label><select class="form-input" id="m-cat"><option>Chairs</option><option>Tables</option><option>Tents</option><option>Decor</option><option>Other</option></select></div>
@@ -410,9 +411,9 @@
 </div>
 
 <!-- EDIT ITEM MODAL -->
-<div id="edit-item-modal" class="modal-overlay">
+<div id="edit-item-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="edit-item-modal-title">
   <div class="modal">
-    <div class="modal-title">Edit item</div>
+    <div class="modal-title" id="edit-item-modal-title">Edit item</div>
     <input type="hidden" id="edit-id">
     <div class="form-grid">
       <div class="form-group full"><label class="form-label">Item name</label><input class="form-input" id="edit-name"></div>
@@ -428,7 +429,7 @@
 </div>
 
 <!-- BILL MODAL -->
-<div id="bill-modal" class="modal-overlay">
+<div id="bill-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Invoice and bill receipt">
   <div class="modal" style="width:520px;">
     <div id="bill-modal-content"></div>
     <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
@@ -477,8 +478,30 @@ function toast(msg, type = 'success') {
   setTimeout(() => el.remove(), 3200);
 }
 
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.add('open');
+    const firstInput = el.querySelector('input:not([type="hidden"]), select, button');
+    if (firstInput) firstInput.focus();
+  }
+}
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
+
+// Close open modal when clicking overlay background or pressing Escape
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-overlay') && e.target.classList.contains('open')) {
+    e.target.classList.remove('open');
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+  }
+});
 
 function showPage(name, navEl) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -654,7 +677,7 @@ function renderOrderLines() {
       <div style="font-size:13px;color:var(--text2);font-family:'Syne',sans-serif;font-weight:600;">
         ${line.itemId && itemById(line.itemId) ? cur(itemById(line.itemId).price * line.qty) : '—'}
       </div>
-      <button class="btn btn-danger btn-sm" onclick="removeOrderLine(${idx})" ${orderLines.length===1?'disabled':''}>✕</button>
+      <button class="btn btn-danger btn-sm" onclick="removeOrderLine(${idx})" aria-label="Remove item row" title="Remove item" ${orderLines.length===1?'disabled':''}>✕</button>
     </div>`;
   }).join('');
   document.getElementById('order-item-count').textContent = orderLines.filter(l => l.itemId).length + ' items';
@@ -784,8 +807,8 @@ function renderOrdersList() {
       <td style="color:var(--text3);font-size:12px;">${o.dateRaw}</td>
       <td style="display:flex;gap:6px;">
         <button class="btn btn-ghost btn-sm" onclick="showBill(orders.find(x=>x.id===${o.id}))">Bill</button>
-        <button class="btn btn-green btn-sm" onclick="markDelivered(${o.id})" ${o.status==='Delivered'?'disabled':''}>✓</button>
-        <button class="btn btn-danger btn-sm" onclick="returnOrder(${o.id})" ${o.status==='Returned'?'disabled':''}>↺</button>
+        <button class="btn btn-green btn-sm" onclick="markDelivered(${o.id})" aria-label="Mark order #${o.id} as delivered" title="Mark delivered" ${o.status==='Delivered'?'disabled':''}>✓</button>
+        <button class="btn btn-danger btn-sm" onclick="returnOrder(${o.id})" aria-label="Return and restock order #${o.id}" title="Return and restock" ${o.status==='Returned'?'disabled':''}>↺</button>
       </td>
     </tr>`).join('')}
   </tbody></table>`;
