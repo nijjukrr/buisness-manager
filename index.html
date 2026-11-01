@@ -74,6 +74,7 @@
   .btn-sm { padding: 6px 12px; font-size: 12px; }
   .btn-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
   .btn-green:hover { background: rgba(16,185,129,0.25); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
   /* STATS GRID */
   .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
@@ -391,9 +392,9 @@
 </div>
 
 <!-- ADD ITEM MODAL -->
-<div id="add-item-modal" class="modal-overlay">
+<div id="add-item-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="add-item-title">
   <div class="modal">
-    <div class="modal-title">Add new item</div>
+    <div class="modal-title" id="add-item-title">Add new item</div>
     <div class="form-grid">
       <div class="form-group full"><label class="form-label">Item name *</label><input class="form-input" id="m-name" placeholder="e.g. Chair, Table, Tent"></div>
       <div class="form-group"><label class="form-label">Category</label><select class="form-input" id="m-cat"><option>Chairs</option><option>Tables</option><option>Tents</option><option>Decor</option><option>Other</option></select></div>
@@ -410,9 +411,9 @@
 </div>
 
 <!-- EDIT ITEM MODAL -->
-<div id="edit-item-modal" class="modal-overlay">
+<div id="edit-item-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="edit-item-title">
   <div class="modal">
-    <div class="modal-title">Edit item</div>
+    <div class="modal-title" id="edit-item-title">Edit item</div>
     <input type="hidden" id="edit-id">
     <div class="form-grid">
       <div class="form-group full"><label class="form-label">Item name</label><input class="form-input" id="edit-name"></div>
@@ -428,7 +429,7 @@
 </div>
 
 <!-- BILL MODAL -->
-<div id="bill-modal" class="modal-overlay">
+<div id="bill-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Invoice preview">
   <div class="modal" style="width:520px;">
     <div id="bill-modal-content"></div>
     <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
@@ -479,6 +480,17 @@ function toast(msg, type = 'success') {
 
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+  }
+});
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('open');
+  }
+});
 
 function showPage(name, navEl) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -654,7 +666,7 @@ function renderOrderLines() {
       <div style="font-size:13px;color:var(--text2);font-family:'Syne',sans-serif;font-weight:600;">
         ${line.itemId && itemById(line.itemId) ? cur(itemById(line.itemId).price * line.qty) : '—'}
       </div>
-      <button class="btn btn-danger btn-sm" onclick="removeOrderLine(${idx})" ${orderLines.length===1?'disabled':''}>✕</button>
+      <button class="btn btn-danger btn-sm" onclick="removeOrderLine(${idx})" ${orderLines.length===1?'disabled':''} aria-label="Remove item" title="Remove item">✕</button>
     </div>`;
   }).join('');
   document.getElementById('order-item-count').textContent = orderLines.filter(l => l.itemId).length + ' items';
@@ -784,8 +796,8 @@ function renderOrdersList() {
       <td style="color:var(--text3);font-size:12px;">${o.dateRaw}</td>
       <td style="display:flex;gap:6px;">
         <button class="btn btn-ghost btn-sm" onclick="showBill(orders.find(x=>x.id===${o.id}))">Bill</button>
-        <button class="btn btn-green btn-sm" onclick="markDelivered(${o.id})" ${o.status==='Delivered'?'disabled':''}>✓</button>
-        <button class="btn btn-danger btn-sm" onclick="returnOrder(${o.id})" ${o.status==='Returned'?'disabled':''}>↺</button>
+        <button class="btn btn-green btn-sm" onclick="markDelivered(${o.id})" ${o.status==='Delivered'?'disabled':''} aria-label="Mark order as delivered" title="Mark order as delivered">✓</button>
+        <button class="btn btn-danger btn-sm" onclick="returnOrder(${o.id})" ${o.status==='Returned'?'disabled':''} aria-label="Return order and restock" title="Return order and restock">↺</button>
       </td>
     </tr>`).join('')}
   </tbody></table>`;
