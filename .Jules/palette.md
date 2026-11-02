@@ -1,0 +1,3 @@
+## 2025-05-18 - Modal Keyboard Dismissal & Focus Management Pattern
+**Learning:** In vanilla JS single-file applications with custom CSS overlays, users expect both pressing `Escape` and clicking outside the modal content to dismiss the overlay. Without keyboard dismissal and ARIA role (`role="dialog"`, `aria-modal="true"`, `aria-labelledby`), keyboard and screen reader users are trapped without an intuitive exit.
+**Action:** Always bind a global `Escape` key handler, add backdrop-click dismissal on the modal overlay container (`e.target === overlay`), and manage focus by auto-focusing the first interactive input on open and restoring previous focus on close.
