@@ -654,7 +654,7 @@ function renderOrderLines() {
       <div style="font-size:13px;color:var(--text2);font-family:'Syne',sans-serif;font-weight:600;">
         ${line.itemId && itemById(line.itemId) ? cur(itemById(line.itemId).price * line.qty) : '—'}
       </div>
-      <button class="btn btn-danger btn-sm" onclick="removeOrderLine(${idx})" ${orderLines.length===1?'disabled':''}>✕</button>
+      <button class="btn btn-danger btn-sm" onclick="removeOrderLine(${idx})" ${orderLines.length===1?'disabled':''} aria-label="Remove item" title="Remove item">✕</button>
     </div>`;
   }).join('');
   document.getElementById('order-item-count').textContent = orderLines.filter(l => l.itemId).length + ' items';
@@ -783,9 +783,9 @@ function renderOrdersList() {
       <td><span class="badge ${o.status === 'Delivered' ? 'badge-green' : 'badge-amber'}">${o.status}</span></td>
       <td style="color:var(--text3);font-size:12px;">${o.dateRaw}</td>
       <td style="display:flex;gap:6px;">
-        <button class="btn btn-ghost btn-sm" onclick="showBill(orders.find(x=>x.id===${o.id}))">Bill</button>
-        <button class="btn btn-green btn-sm" onclick="markDelivered(${o.id})" ${o.status==='Delivered'?'disabled':''}>✓</button>
-        <button class="btn btn-danger btn-sm" onclick="returnOrder(${o.id})" ${o.status==='Returned'?'disabled':''}>↺</button>
+        <button class="btn btn-ghost btn-sm" onclick="showBill(orders.find(x=>x.id===${o.id}))" aria-label="View invoice for order #${o.id}">Bill</button>
+        <button class="btn btn-green btn-sm" onclick="markDelivered(${o.id})" ${o.status==='Delivered'?'disabled':''} aria-label="Mark order #${o.id} as delivered" title="Mark delivered">✓</button>
+        <button class="btn btn-danger btn-sm" onclick="returnOrder(${o.id})" ${o.status==='Returned'?'disabled':''} aria-label="Return order #${o.id} and restock items" title="Return order">↺</button>
       </td>
     </tr>`).join('')}
   </tbody></table>`;
