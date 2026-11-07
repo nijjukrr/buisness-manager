@@ -1,0 +1,3 @@
+## 2026-04-20 - Modal Dismissibility & Accessible Focus Management
+**Learning:** In vanilla single-file PWA apps with full-screen overlay dialogs, users frequently attempt to exit dialogs via the Escape key or by tapping outside the dialog card (the modal-overlay backdrop). Lacking these standard dismiss pathways traps keyboard and touch users unless they specifically target the Cancel/Close button. Additionally, retaining and restoring focus to `document.activeElement` preserves the user's cursor position in dense tabular views.
+**Action:** When creating or auditing modal overlays, always bind `Escape` key handling, implement backdrop click detection (`e.target === overlay`), and manage focus into the dialog and back to the triggering element.
