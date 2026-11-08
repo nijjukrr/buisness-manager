@@ -1,0 +1,3 @@
+## 2025-05-18 - Accessible Modal Dialog Keyboard Dismissal and Focus Management in Vanilla PWAs
+**Learning:** In vanilla HTML/JS single-page PWAs, custom modal overlays frequently lack native `<dialog>` semantics, resulting in missing keyboard dismissal (`Escape`), backdrop click closure, and screen reader announcements. Adding `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, and auto-focusing the first interactive element when opened makes custom modals behave like native, accessible dialogs without needing bulky third-party libraries.
+**Action:** When working on vanilla JS overlays or modals, always wire up global `Escape` key listening, backdrop click dismissal, and proper ARIA dialog attributes alongside auto-focusing the primary input.
