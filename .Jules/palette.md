@@ -1,0 +1,3 @@
+## 2026-04-20 - Icon-Only Table and Form Actions Need ARIA Labels and Disabled State Styling
+**Learning:** In vanilla JS single-file applications where action buttons inside table rows or dynamic lists use Unicode icons (`✕`, `✓`, `↺`), screen readers cannot infer user intent without explicit `aria-label`s and native tooltips (`title`). Furthermore, relying solely on HTML `disabled` attributes without `.btn:disabled` CSS leaves the buttons visually ambiguous when disabled.
+**Action:** Always inspect dynamically rendered action buttons for missing accessible names and ensure global `.btn:disabled` opacity and cursor styles exist.
