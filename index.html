@@ -138,8 +138,23 @@
   select.form-input option { background: var(--surface2); }
   .form-row { display: flex; gap: 12px; align-items: flex-end; }
 
-  /* ORDER BUILDER */
-  .order-line { display: grid; grid-template-columns: 1fr 100px 110px auto; gap: 10px; align-items: center; padding: 10px; background: var(--surface2); border-radius: var(--radius-sm); margin-bottom: 8px; border: 1px solid var(--border); }
+  /* ORDER BUILDER & SIDE-BY-SIDE LAYOUT */
+  .order-split { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(360px, 1fr); gap: 24px; align-items: start; }
+  .order-line { display: grid; grid-template-columns: 1fr auto 90px auto; gap: 12px; align-items: center; padding: 12px; background: var(--surface2); border-radius: var(--radius-sm); margin-bottom: 10px; border: 1px solid var(--border); transition: border-color 0.15s, background 0.15s; }
+  .order-line:hover { border-color: var(--border2); background: #f8fafc; }
+  .stepper { display: inline-flex; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .stepper-btn { width: 30px; height: 34px; border: none; background: transparent; color: var(--text2); font-weight: 700; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; }
+  .stepper-btn:hover:not(:disabled) { background: var(--surface2); color: var(--accent2); }
+  .stepper-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .stepper-input { width: 44px; height: 34px; border: none; border-left: 1px solid var(--border); border-right: 1px solid var(--border); text-align: center; font-family: 'Syne', sans-serif; font-weight: 600; font-size: 13px; color: var(--text); background: transparent; -moz-appearance: textfield; }
+  .stepper-input::-webkit-outer-spin-button, .stepper-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .quick-items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 12px; margin-bottom: 16px; }
+  .quick-item-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; cursor: pointer; transition: all 0.15s; text-align: center; user-select: none; }
+  .quick-item-card:hover { border-color: var(--accent); background: var(--accent-glow); transform: translateY(-1px); }
+  .quick-item-icon { font-size: 24px; margin-bottom: 4px; }
+  .quick-item-name { font-size: 12px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .quick-item-sub { font-size: 11px; color: var(--accent2); font-weight: 600; font-family: 'Syne', sans-serif; margin-top: 2px; }
+  .quick-item-stock { font-size: 10px; color: var(--text3); }
   .add-line-btn { width: 100%; padding: 10px; border: 1px dashed var(--border2); border-radius: var(--radius-sm); background: transparent; color: var(--text3); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.15s; text-align: center; }
   .add-line-btn:hover { border-color: var(--accent); color: var(--accent2); background: var(--accent-glow); }
 
@@ -212,10 +227,19 @@
     .stats-grid { grid-template-columns: 1fr 1fr; }
     .two-col { grid-template-columns: 1fr; }
   }
+  @media (max-width: 992px) {
+    .order-split { grid-template-columns: 1fr; }
+  }
   @media (max-width: 600px) {
     .stats-grid { grid-template-columns: 1fr; }
     .form-grid { grid-template-columns: 1fr; }
-    .order-line { grid-template-columns: 1fr 1fr; }
+    .order-line { grid-template-columns: 1fr; gap: 8px; }
+  }
+
+  /* ACCESSIBILITY & FOCUS */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   /* ANIMATIONS */
@@ -302,33 +326,67 @@
 
     <!-- NEW ORDER -->
     <div id="page-order" class="page">
-      <div class="topbar"><div><div class="page-title">New Order</div><div class="page-sub">Create a customer order</div></div></div>
-      <div style="display:grid;grid-template-columns:1fr 380px;gap:20px;">
+      <div class="topbar">
+        <div><div class="page-title">New Order</div><div class="page-sub">Create customer orders with live billing side-by-side</div></div>
+        <div class="topbar-right">
+          <button class="btn btn-ghost btn-sm" onclick="clearOrder()">Reset Form</button>
+        </div>
+      </div>
+      <div class="order-split">
         <div>
           <div class="card">
-            <div class="card-header"><div class="card-title">Customer details</div></div>
+            <div class="card-header">
+              <div>
+                <div class="card-title">1. Customer details</div>
+                <div class="card-sub">Buyer contact and delivery specifics</div>
+              </div>
+            </div>
             <div class="form-grid">
               <div class="form-group"><label class="form-label">Customer name *</label><input class="form-input" id="o-cust" placeholder="e.g. Ravi Kumar" oninput="updateBill()"></div>
               <div class="form-group"><label class="form-label">Phone number</label><input class="form-input" id="o-phone" placeholder="+91 98765 43210" oninput="updateBill()"></div>
               <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="o-email" placeholder="customer@email.com"></div>
               <div class="form-group"><label class="form-label">Delivery date</label><input class="form-input" id="o-date" type="date"></div>
               <div class="form-group"><label class="form-label">Auto Charge / வண்டி வாடகை</label><input class="form-input" id="o-auto" type="number" placeholder="150" min="0" oninput="updateBill()"></div>
-              <div class="form-group full"><label class="form-label">Address / Note</label><input class="form-input" id="o-addr" placeholder="Delivery address or note"></div>
+              <div class="form-group full"><label class="form-label">Address / Note</label><input class="form-input" id="o-addr" placeholder="Delivery address or special instructions"></div>
             </div>
           </div>
+
           <div class="card">
-            <div class="card-header"><div class="card-title">Order items</div><span class="badge badge-blue" id="order-item-count">0 items</span></div>
+            <div class="card-header">
+              <div>
+                <div class="card-title">2. Quick Item Selection</div>
+                <div class="card-sub">Click any item below to instantly add to order</div>
+              </div>
+            </div>
+            <div class="quick-items-grid" id="quick-items-picker"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">3. Order items list</div>
+                <div class="card-sub">Adjust item quantities or remove lines</div>
+              </div>
+              <span class="badge badge-blue" id="order-item-count">0 items</span>
+            </div>
             <div id="order-lines"></div>
-            <button class="add-line-btn" onclick="addOrderLine()">+ Add another item</button>
+            <button class="add-line-btn" onclick="addOrderLine()" aria-label="Add another item row">+ Add another item</button>
           </div>
         </div>
+
         <div>
-          <div class="card" style="position:sticky;top:20px;">
-            <div class="card-header"><div class="card-title">Order summary</div></div>
+          <div class="card" style="position:sticky;top:24px;border:1px solid rgba(16,185,129,0.3);box-shadow:0 8px 30px rgba(0,0,0,0.04);">
+            <div class="card-header" style="border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:14px;">
+              <div>
+                <div class="card-title" style="display:flex;align-items:center;gap:6px;">🧾 Live Bill Preview</div>
+                <div class="card-sub">Real-time side-by-side calculation</div>
+              </div>
+              <span class="badge badge-green">Ready</span>
+            </div>
             <div id="bill-summary"></div>
-            <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
-              <button class="btn btn-primary" style="width:100%;" onclick="placeOrder()">Place Order & Generate Bill</button>
-              <button class="btn btn-ghost" style="width:100%;" onclick="clearOrder()">Clear</button>
+            <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;">
+              <button class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;" onclick="placeOrder()">Place Order & Generate Bill</button>
+              <button class="btn btn-ghost" style="width:100%;" onclick="clearOrder()">Clear Order</button>
             </div>
           </div>
         </div>
@@ -391,9 +449,9 @@
 </div>
 
 <!-- ADD ITEM MODAL -->
-<div id="add-item-modal" class="modal-overlay">
+<div id="add-item-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="add-item-title" onclick="if(event.target===this)closeModal('add-item-modal')">
   <div class="modal">
-    <div class="modal-title">Add new item</div>
+    <div class="modal-title" id="add-item-title">Add new item</div>
     <div class="form-grid">
       <div class="form-group full"><label class="form-label">Item name *</label><input class="form-input" id="m-name" placeholder="e.g. Chair, Table, Tent"></div>
       <div class="form-group"><label class="form-label">Category</label><select class="form-input" id="m-cat"><option>Chairs</option><option>Tables</option><option>Tents</option><option>Decor</option><option>Other</option></select></div>
@@ -403,16 +461,16 @@
       <div class="form-group"><label class="form-label">Low stock alert at</label><input class="form-input" id="m-low" type="number" placeholder="20" min="1"></div>
     </div>
     <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
-      <button class="btn btn-ghost" onclick="closeModal('add-item-modal')">Cancel</button>
-      <button class="btn btn-primary" onclick="addItem()">Add item</button>
+      <button class="btn btn-ghost" aria-label="Cancel adding item" onclick="closeModal('add-item-modal')">Cancel</button>
+      <button class="btn btn-primary" aria-label="Confirm adding item" onclick="addItem()">Add item</button>
     </div>
   </div>
 </div>
 
 <!-- EDIT ITEM MODAL -->
-<div id="edit-item-modal" class="modal-overlay">
+<div id="edit-item-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="edit-item-title" onclick="if(event.target===this)closeModal('edit-item-modal')">
   <div class="modal">
-    <div class="modal-title">Edit item</div>
+    <div class="modal-title" id="edit-item-title">Edit item</div>
     <input type="hidden" id="edit-id">
     <div class="form-grid">
       <div class="form-group full"><label class="form-label">Item name</label><input class="form-input" id="edit-name"></div>
@@ -421,19 +479,19 @@
       <div class="form-group"><label class="form-label">Low stock alert at</label><input class="form-input" id="edit-low" type="number"></div>
     </div>
     <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
-      <button class="btn btn-ghost" onclick="closeModal('edit-item-modal')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveEditItem()">Save changes</button>
+      <button class="btn btn-ghost" aria-label="Cancel editing item" onclick="closeModal('edit-item-modal')">Cancel</button>
+      <button class="btn btn-primary" aria-label="Confirm item changes" onclick="saveEditItem()">Save changes</button>
     </div>
   </div>
 </div>
 
 <!-- BILL MODAL -->
-<div id="bill-modal" class="modal-overlay">
+<div id="bill-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="bill-title" onclick="if(event.target===this)closeModal('bill-modal')">
   <div class="modal" style="width:520px;">
     <div id="bill-modal-content"></div>
     <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
-      <button class="btn btn-ghost" onclick="closeModal('bill-modal')">Close</button>
-      <button class="btn btn-primary" onclick="window.print()">Print bill</button>
+      <button class="btn btn-ghost" aria-label="Close bill modal" onclick="closeModal('bill-modal')">Close</button>
+      <button class="btn btn-primary" aria-label="Print invoice" onclick="window.print()">Print bill</button>
     </div>
   </div>
 </div>
@@ -443,11 +501,12 @@
 
 <script>
 // ─── STATE ───
-let inventory = [
+const DEFAULT_INVENTORY = [
   { id: 1, name: 'Plastic Chair', icon: '🪑', category: 'Chairs', price: 10, stock: 500, lowAt: 50 },
   { id: 2, name: 'Dining Table', icon: '🪵', category: 'Tables', price: 50, stock: 100, lowAt: 10 },
   { id: 3, name: 'Shamiana Tent', icon: '⛺', category: 'Tents', price: 500, stock: 10, lowAt: 2 },
 ];
+let inventory = [...DEFAULT_INVENTORY];
 let orders = [];
 let nextItemId = 4;
 let nextOrderId = 1;
@@ -463,6 +522,38 @@ let settings = {
   tagline: '',
   currency: 'Rs'
 };
+
+const STORAGE_KEY = 'annai_store_data_v1';
+
+function saveState() {
+  try {
+    const payload = {
+      inventory,
+      orders,
+      nextItemId,
+      nextOrderId,
+      settings
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  } catch (e) {
+    console.error('Failed to save state to localStorage:', e);
+  }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.inventory && Array.isArray(data.inventory)) inventory = data.inventory;
+    if (data.orders && Array.isArray(data.orders)) orders = data.orders;
+    if (data.nextItemId) nextItemId = data.nextItemId;
+    if (data.nextOrderId) nextOrderId = data.nextOrderId;
+    if (data.settings && typeof data.settings === 'object') settings = { ...settings, ...data.settings };
+  } catch (e) {
+    console.error('Failed to load state from localStorage:', e);
+  }
+}
 
 // ─── HELPERS ───
 const cur = (n) => `${settings.currency} ${Number(n).toLocaleString('en-IN')}`;
@@ -573,7 +664,7 @@ function renderInventoryTable() {
       <td><span class="qty-pill">${i.stock}</span></td>
       <td><div class="progress"><div class="progress-fill" style="width:${pct}%;background:${color};"></div></div></td>
       <td>${badge}</td>
-      <td style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm" onclick="editItem(${i.id})">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteItem(${i.id})">Remove</button></td>
+      <td style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm" aria-label="Edit ${i.name}" onclick="editItem(${i.id})">Edit</button><button class="btn btn-danger btn-sm" aria-label="Remove ${i.name}" onclick="deleteItem(${i.id})">Remove</button></td>
     </tr>`;
   }).join('');
 }
@@ -595,10 +686,12 @@ function addItem() {
   if (!name || isNaN(price) || isNaN(stock)) { toast('Please fill all required fields', 'error'); return; }
   if (inventory.find(i => i.name.toLowerCase() === name.toLowerCase())) { toast('Item already exists', 'error'); return; }
   inventory.push({ id: nextItemId++, name, icon, category: cat, price, stock, lowAt });
+  saveState();
   closeModal('add-item-modal');
   ['m-name','m-price','m-stock','m-icon','m-low'].forEach(id => document.getElementById(id).value = '');
   toast(`${name} added to inventory`);
   renderInventoryTable();
+  renderQuickItemsPicker();
 }
 
 function editItem(id) {
@@ -619,9 +712,11 @@ function saveEditItem() {
   const add = parseInt(document.getElementById('edit-addstock').value) || 0;
   item.stock += add;
   item.lowAt = parseInt(document.getElementById('edit-low').value) || item.lowAt;
+  saveState();
   closeModal('edit-item-modal');
   toast(`${item.name} updated`);
   renderInventoryTable();
+  renderQuickItemsPicker();
 }
 
 function deleteItem(id) {
@@ -631,13 +726,74 @@ function deleteItem(id) {
   if (pastOrdersCount > 0) msg = `This item appears in ${pastOrdersCount} past orders. Are you sure you want to remove it?`;
   if (!confirm(msg)) return;
   inventory = inventory.filter(i => i.id !== id);
+  saveState();
   toast(`${item.name} removed`, 'info');
   renderInventoryTable();
+  renderQuickItemsPicker();
 }
 
 // ─── ORDER ───
 function initOrder() {
   if (!orderLines.length) orderLines = [{ itemId: '', qty: 1 }];
+  renderQuickItemsPicker();
+  renderOrderLines();
+  updateBill();
+}
+
+function renderQuickItemsPicker() {
+  const container = document.getElementById('quick-items-picker');
+  if (!container) return;
+  if (!inventory.length) {
+    container.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:8px;">No items available in inventory</div>';
+    return;
+  }
+  container.innerHTML = inventory.map(item => `
+    <div class="quick-item-card" onclick="quickAddItem(${item.id})" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){quickAddItem(${item.id});event.preventDefault();}">
+      <div class="quick-item-icon">${item.icon}</div>
+      <div class="quick-item-name" title="${item.name}">${item.name}</div>
+      <div class="quick-item-sub">${cur(item.price)}</div>
+      <div class="quick-item-stock">${item.stock > 0 ? `${item.stock} left` : 'Out of stock'}</div>
+    </div>
+  `).join('');
+}
+
+function quickAddItem(itemId) {
+  const item = itemById(itemId);
+  if (!item || item.stock <= 0) {
+    toast(`${item ? item.name : 'Item'} is currently out of stock`, 'error');
+    return;
+  }
+  const existingIndex = orderLines.findIndex(l => l.itemId === itemId);
+  if (existingIndex > -1) {
+    if (orderLines[existingIndex].qty < item.stock) {
+      orderLines[existingIndex].qty += 1;
+      toast(`Increased ${item.name} qty to ${orderLines[existingIndex].qty}`);
+    } else {
+      toast(`Max available stock reached for ${item.name} (${item.stock})`, 'error');
+      return;
+    }
+  } else {
+    const emptySlot = orderLines.findIndex(l => !l.itemId);
+    if (emptySlot > -1) {
+      orderLines[emptySlot] = { itemId, qty: 1 };
+    } else {
+      orderLines.push({ itemId, qty: 1 });
+    }
+    toast(`Added ${item.name} to order`);
+  }
+  renderOrderLines();
+  updateBill();
+}
+
+function changeLineQty(idx, delta) {
+  if (!orderLines[idx]) return;
+  const item = itemById(orderLines[idx].itemId);
+  const maxStock = item ? item.stock : 9999;
+  const newQty = Math.max(1, Math.min(maxStock, (orderLines[idx].qty || 1) + delta));
+  if (newQty === orderLines[idx].qty && delta > 0 && item && newQty >= item.stock) {
+    toast(`Stock limit reached (${item.stock})`, 'error');
+  }
+  orderLines[idx].qty = newQty;
   renderOrderLines();
   updateBill();
 }
@@ -648,13 +804,24 @@ function renderOrderLines() {
   const el = document.getElementById('order-lines');
   el.innerHTML = orderLines.map((line, idx) => {
     const selOpts = `<option value="">Select item...</option>${inventory.map(i => `<option value="${i.id}" ${line.itemId === i.id ? 'selected' : ''}>${i.icon} ${i.name} — ${cur(i.price)} (${i.stock} left)</option>`).join('')}`;
+    const item = line.itemId ? itemById(line.itemId) : null;
+    const lineTotal = item ? cur(item.price * line.qty) : '—';
+    const isMax = item ? line.qty >= item.stock : false;
+
     return `<div class="order-line">
-      <select class="form-input" onchange="orderLines[${idx}].itemId=parseInt(this.value)||'';renderOrderLines();updateBill();">${selOpts}</select>
-      <input class="form-input" type="number" min="1" value="${line.qty}" placeholder="Qty" onchange="orderLines[${idx}].qty=Math.max(1,parseInt(this.value)||1);updateBill();">
-      <div style="font-size:13px;color:var(--text2);font-family:'Syne',sans-serif;font-weight:600;">
-        ${line.itemId && itemById(line.itemId) ? cur(itemById(line.itemId).price * line.qty) : '—'}
+      <select class="form-input" aria-label="Select item for line ${idx + 1}" onchange="orderLines[${idx}].itemId=parseInt(this.value)||'';renderOrderLines();updateBill();">${selOpts}</select>
+
+      <div class="stepper">
+        <button type="button" class="stepper-btn" onclick="changeLineQty(${idx}, -1)" ${line.qty <= 1 ? 'disabled' : ''} aria-label="Decrease quantity">−</button>
+        <input class="stepper-input" type="number" min="1" max="${item ? item.stock : 9999}" value="${line.qty}" aria-label="Item quantity" onchange="orderLines[${idx}].qty=Math.max(1,parseInt(this.value)||1);updateBill();">
+        <button type="button" class="stepper-btn" onclick="changeLineQty(${idx}, 1)" ${isMax ? 'disabled' : ''} aria-label="Increase quantity">+</button>
       </div>
-      <button class="btn btn-danger btn-sm" onclick="removeOrderLine(${idx})" ${orderLines.length===1?'disabled':''}>✕</button>
+
+      <div style="font-size:13.5px;color:var(--text);font-family:'Syne',sans-serif;font-weight:700;text-align:right;">
+        ${lineTotal}
+      </div>
+
+      <button class="btn btn-danger btn-sm" aria-label="Remove item" onclick="removeOrderLine(${idx})" ${orderLines.length===1 && !line.itemId ?'disabled':''}>✕</button>
     </div>`;
   }).join('');
   document.getElementById('order-item-count').textContent = orderLines.filter(l => l.itemId).length + ' items';
@@ -666,15 +833,40 @@ function removeOrderLine(idx) { orderLines.splice(idx, 1); renderOrderLines(); u
 function updateBill() {
   const el = document.getElementById('bill-summary');
   const validLines = orderLines.filter(l => l.itemId && itemById(l.itemId));
-  if (!validLines.length) { el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">Add items to see summary</div>'; return; }
+  const custName = document.getElementById('o-cust')?.value.trim() || '';
+  const autoCharge = parseInt(document.getElementById('o-auto')?.value) || 0;
+
+  if (!validLines.length) {
+    el.innerHTML = `
+      <div style="text-align:center;padding:36px 16px;color:var(--text3);font-size:13px;border:1px dashed var(--border);border-radius:var(--radius-sm);background:var(--surface2);">
+        <div style="font-size:28px;margin-bottom:8px;">🛒</div>
+        <div>Your bill preview is empty.</div>
+        <div style="font-size:11px;margin-top:4px;color:var(--text3);">Select items from the catalog or dropdown on the left.</div>
+      </div>
+    `;
+    return;
+  }
   const subtotal = validLines.reduce((s, l) => s + itemById(l.itemId).price * l.qty, 0);
-  const autoCharge = parseInt(document.getElementById('o-auto').value) || 0;
   const total = subtotal + autoCharge;
   el.innerHTML = `
-    ${validLines.map(l => { const item = itemById(l.itemId); return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;"><span>${item.icon} ${item.name} × ${l.qty}</span><span style="color:var(--text2);">${cur(item.price * l.qty)}</span></div>`; }).join('')}
-    <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:13px;color:var(--text3);"><span>Subtotal / லொத்த தொகை</span><span>${cur(subtotal)}</span></div>
-    ${autoCharge > 0 ? `<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;color:var(--text3);"><span>Auto Charge / வண்டி வாடகை</span><span>${cur(autoCharge)}</span></div>` : ''}
-    <div style="display:flex;justify-content:space-between;padding:14px 0 4px;font-family:'Syne',sans-serif;font-size:18px;font-weight:700;border-top:1px solid var(--border2);margin-top:6px;"><span>Total / மொத்தம்</span><span style="color:var(--accent2);">${cur(total)}</span></div>
+    ${custName ? `<div style="background:var(--surface2);padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:12px;border:1px solid var(--border);font-size:12px;"><span style="color:var(--text3);">Billing for: </span><strong>${custName}</strong></div>` : ''}
+    <div style="max-height:220px;overflow-y:auto;padding-right:4px;">
+      ${validLines.map(l => {
+        const item = itemById(l.itemId);
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;">
+          <div><span style="margin-right:6px;">${item.icon}</span><strong>${item.name}</strong> <span style="color:var(--text3);font-size:12px;">× ${l.qty}</span></div>
+          <span style="font-family:'Syne',sans-serif;font-weight:600;color:var(--text);">${cur(item.price * l.qty)}</span>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:10px;">
+      <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;color:var(--text3);"><span>Subtotal / லொத்த தொகை</span><span style="font-family:'Syne',sans-serif;font-weight:600;color:var(--text2);">${cur(subtotal)}</span></div>
+      ${autoCharge > 0 ? `<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;color:var(--text3);"><span>Auto Charge / வண்டி வாடகை</span><span style="font-family:'Syne',sans-serif;font-weight:600;color:var(--text2);">${cur(autoCharge)}</span></div>` : ''}
+      <div style="display:flex;justify-content:space-between;align-items:baseline;padding:14px 0 4px;font-family:'Syne',sans-serif;font-size:20px;font-weight:800;border-top:2px solid var(--border2);margin-top:6px;">
+        <span>Total / மொத்தம்</span>
+        <span style="color:var(--accent2);">${cur(total)}</span>
+      </div>
+    </div>
   `;
 }
 
@@ -712,6 +904,7 @@ function placeOrder() {
     status: 'Pending'
   };
   orders.unshift(order);
+  saveState();
   document.getElementById('order-count-badge').textContent = orders.length;
   showBill(order);
   clearOrder();
@@ -730,7 +923,7 @@ function showBill(order) {
   content.innerHTML = `
     <div class="bill">
       <div class="bill-header">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;" id="bill-title">
           <div><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">ANNAI STORE</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">${settings.bizName}</div></div>
           <div style="text-align:right;"><div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;">INVOICE <br><span style="font-size:12px;font-weight:600;">விலைப்பட்டியல்</span></div><div style="font-size:12px;color:var(--text3);margin-top:4px;">#ORD-${String(order.id).padStart(4,'0')}</div></div>
         </div>
@@ -783,9 +976,9 @@ function renderOrdersList() {
       <td><span class="badge ${o.status === 'Delivered' ? 'badge-green' : 'badge-amber'}">${o.status}</span></td>
       <td style="color:var(--text3);font-size:12px;">${o.dateRaw}</td>
       <td style="display:flex;gap:6px;">
-        <button class="btn btn-ghost btn-sm" onclick="showBill(orders.find(x=>x.id===${o.id}))">Bill</button>
-        <button class="btn btn-green btn-sm" onclick="markDelivered(${o.id})" ${o.status==='Delivered'?'disabled':''}>✓</button>
-        <button class="btn btn-danger btn-sm" onclick="returnOrder(${o.id})" ${o.status==='Returned'?'disabled':''}>↺</button>
+        <button class="btn btn-ghost btn-sm" aria-label="View invoice for Order #${o.id}" onclick="showBill(orders.find(x=>x.id===${o.id}))">Bill</button>
+        <button class="btn btn-green btn-sm" aria-label="Mark Order #${o.id} as delivered" title="Mark as delivered" onclick="markDelivered(${o.id})" ${o.status==='Delivered'?'disabled':''}>✓</button>
+        <button class="btn btn-danger btn-sm" aria-label="Return Order #${o.id}" title="Return order" onclick="returnOrder(${o.id})" ${o.status==='Returned'?'disabled':''}>↺</button>
       </td>
     </tr>`).join('')}
   </tbody></table>`;
@@ -800,7 +993,12 @@ function filterOrders(f, el) {
 
 function markDelivered(id) {
   const o = orders.find(x => x.id === id);
-  if (o) { o.status = 'Delivered'; toast(`Order #${id} marked as delivered`); renderOrdersList(); }
+  if (o) {
+    o.status = 'Delivered';
+    saveState();
+    toast(`Order #${id} marked as delivered`);
+    renderOrdersList();
+  }
 }
 
 function returnOrder(id) {
@@ -812,8 +1010,10 @@ function returnOrder(id) {
       const item = itemById(l.item.id);
       if (item) item.stock += l.qty;
     });
+    saveState();
     toast(`Order #${id} returned and items restocked.`, 'info');
     renderOrdersList();
+    renderQuickItemsPicker();
   }
 }
 
@@ -894,16 +1094,37 @@ function saveSettings() {
   settings.tagline = document.getElementById('set-tag').value;
   settings.currency = document.getElementById('set-currency').value || 'Rs';
   document.getElementById('sidebar-biz-name').textContent = settings.bizName;
+  saveState();
   toast('Settings saved!');
   const activePage = document.querySelector('.page.active');
   if (activePage) renderPage(activePage.id.replace('page-', ''));
 }
 
 // ─── INIT ───
+loadState();
+document.getElementById('sidebar-biz-name').textContent = settings.bizName;
 document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 renderDashboard();
 initOrder();
 document.getElementById('order-count-badge').textContent = orders.length;
+
+// Global keyboard accessibility listener
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const openModals = document.querySelectorAll('.modal-overlay.open');
+    openModals.forEach(m => m.classList.remove('open'));
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    const activePage = document.querySelector('.page.active');
+    if (activePage && activePage.id === 'page-order') {
+      placeOrder();
+    } else if (document.getElementById('add-item-modal').classList.contains('open')) {
+      addItem();
+    } else if (document.getElementById('edit-item-modal').classList.contains('open')) {
+      saveEditItem();
+    }
+  }
+});
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(() => console.log('Service Worker Registered'));
